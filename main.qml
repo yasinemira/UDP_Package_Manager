@@ -34,7 +34,7 @@ Window {
         DataContainer {
             id: _ipv4Header            
             width: 280
-            componentDetail: ""
+            componentDetail: udpInstance.ipv4Header
         }
 
         DataContainer {

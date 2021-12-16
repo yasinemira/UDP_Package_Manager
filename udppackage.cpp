@@ -32,9 +32,9 @@ UdpPackage::UdpPackage(char* ethernetPacket, int packetLength)
     setMainPacket(ethernetPacket, packetLength);
     setEthernetFrameHeader(ethernetPacket, packetLength);
     setIpv4Header(ethernetPacket);
-    setIpv4HeaderChecksum();
-    setSourceIPAdress();
-    setDestinationIPAdress();
+    //setIpv4HeaderChecksum();
+    //setSourceIPAdress();
+    //setDestinationIPAdress();
     setUdpHeader(ethernetPacket);
     setSourcePort();
     setDestinationPort();
@@ -47,9 +47,9 @@ void UdpPackage::displayPackageDetails(char* ethernetPacket, int packetLength)
     setMainPacket(ethernetPacket, packetLength);
     setEthernetFrameHeader(ethernetPacket, packetLength);
     setIpv4Header(ethernetPacket);
-    setIpv4HeaderChecksum();
-    setSourceIPAdress();
-    setDestinationIPAdress();
+    //setIpv4HeaderChecksum();
+    //setSourceIPAdress();
+    //setDestinationIPAdress();
     setUdpHeader(ethernetPacket);
     setSourcePort();
     setDestinationPort();
@@ -57,8 +57,8 @@ void UdpPackage::displayPackageDetails(char* ethernetPacket, int packetLength)
     setPayload(ethernetPacket, packetLength);
 
     qDebug() << "■ Ethernet frame header: " << m_ethernetFrameHeader;
-    std::cout <<"\n■ IPv4 header: " << convertToHex(getIpv4Header(), 1) << std::endl <<
-                "\n■ IPv4 header checksum: " << getIpv4HeaderChecksum() << std::endl <<
+    qDebug() <<"\n■ IPv4 header: " << m_ipv4Header;
+    std::cout<<"\n■ IPv4 header checksum: " << getIpv4HeaderChecksum() << std::endl <<
                 "\n■ Source IP Address: " << getSourceIPAdress() << std::endl <<
                 "\n■ Destination IP Address: " << getDestinationIPAdress() << std::endl <<
                 "\n■ UDP header: " << convertToHex(getUdpHeader(), 1) << std::endl <<
@@ -66,8 +66,8 @@ void UdpPackage::displayPackageDetails(char* ethernetPacket, int packetLength)
                 "\n■ Destination port: " << getDestinationPort() << std::endl;
     qDebug() << "\n■ UDP Checksum: " << getUdpChecksum();
     qDebug() << "\n■ UDP Payload: " << m_payload;
-    std::cout<< "\n■ UDP Payload size: " << m_payloadLength << std::endl <<
-                "\n■ UDP Main Packet: " << convertToHex(getMainPacket(), 1) << std::endl <<
+    //std::cout<< "\n■ UDP Payload size: " << getPayload().size()  << std::endl <<
+    std::cout<< "\n■ UDP Main Packet: " << convertToHex(getMainPacket(), 1) << std::endl <<
                 "\n■ UDP Packet size: " << getMainPacket().size();
 }
 
@@ -105,14 +105,14 @@ void UdpPackage::setIpv4Header(char* ethernetPacket)
         tempString << ethernetPacket[i]; // Buffering IPv4 frame header component
     }
 
-    m_ipv4Header = tempString.str();
+    m_ipv4Header = QString::fromStdString(convertToHex(tempString.str(), 1));
 }
 
 /*!
  * \brief Getter function for parsing the IPv4 Header
  * \return IPv4 Header content - 14 byte
  */
-std::string UdpPackage::getIpv4Header() const
+QString UdpPackage::getIpv4Header() const
 {
     return m_ipv4Header;
 }
@@ -120,17 +120,17 @@ std::string UdpPackage::getIpv4Header() const
 /*!
  * \brief Setter function for parsing the IPv4 Header Checksum
  */
-void UdpPackage::setIpv4HeaderChecksum()
-{
-    const auto ipv4HeaderChecksumTemp = convertToHex(m_ipv4Header.substr(4,2), 0);
-    unsigned int ipv4HeaderChecksumDec = 0;
+//void UdpPackage::setIpv4HeaderChecksum()
+//{
+//    const auto ipv4HeaderChecksumTemp = convertToHex(m_ipv4Header.substr(4,2), 0);
+//    unsigned int ipv4HeaderChecksumDec = 0;
 
-    std::stringstream ssIPHeaderChecksum;
-    ssIPHeaderChecksum << std::hex << ipv4HeaderChecksumTemp;
-    ssIPHeaderChecksum >> ipv4HeaderChecksumDec;
+//    std::stringstream ssIPHeaderChecksum;
+//    ssIPHeaderChecksum << std::hex << ipv4HeaderChecksumTemp;
+//    ssIPHeaderChecksum >> ipv4HeaderChecksumDec;
 
-    m_ipv4HeaderChecksum = std::to_string(ipv4HeaderChecksumDec);
-}
+//    m_ipv4HeaderChecksum = std::to_string(ipv4HeaderChecksumDec);
+//}
 
 /*!
  * \brief Getter function for parsing the IP checksum from IPv4 Header
@@ -144,42 +144,42 @@ std::string UdpPackage::getIpv4HeaderChecksum() const
 /*!
  * \brief Setter function for parsing the source IP Address
  */
-void UdpPackage::setSourceIPAdress()
-{
-    const auto sourceIPAdressTemp = convertToHex(m_ipv4Header.substr(6,4), 0);
+//void UdpPackage::setSourceIPAdress()
+//{
+//    const auto sourceIPAdressTemp = convertToHex(m_ipv4Header.substr(6,4), 0);
 
-    std::stringstream ssnetworkID1Source;
-    std::stringstream ssnetworkID2Source;
-    std::stringstream ssnetworkID3Source;
-    std::stringstream sshostIDSource;
+//    std::stringstream ssnetworkID1Source;
+//    std::stringstream ssnetworkID2Source;
+//    std::stringstream ssnetworkID3Source;
+//    std::stringstream sshostIDSource;
 
-    unsigned int networkID1DecSource = 0;
-    unsigned int networkID2DecSource = 0;
-    unsigned int networkID3DecSource = 0;
-    unsigned int hostIDDecSource = 0;
+//    unsigned int networkID1DecSource = 0;
+//    unsigned int networkID2DecSource = 0;
+//    unsigned int networkID3DecSource = 0;
+//    unsigned int hostIDDecSource = 0;
 
-    std::string networkIDComponent1 = sourceIPAdressTemp.substr(0,2);
-    std::string networkIDComponent2 = sourceIPAdressTemp.substr(2,2);
-    std::string networkIDComponent3 = sourceIPAdressTemp.substr(4,2);
-    std::string hostIDComponent = sourceIPAdressTemp.substr(6,2);
+//    std::string networkIDComponent1 = sourceIPAdressTemp.substr(0,2);
+//    std::string networkIDComponent2 = sourceIPAdressTemp.substr(2,2);
+//    std::string networkIDComponent3 = sourceIPAdressTemp.substr(4,2);
+//    std::string hostIDComponent = sourceIPAdressTemp.substr(6,2);
 
-    ssnetworkID1Source << std::hex << networkIDComponent1;
-    ssnetworkID1Source >> networkID1DecSource;
+//    ssnetworkID1Source << std::hex << networkIDComponent1;
+//    ssnetworkID1Source >> networkID1DecSource;
 
-    ssnetworkID2Source << std::hex << networkIDComponent2;
-    ssnetworkID2Source >> networkID2DecSource;
+//    ssnetworkID2Source << std::hex << networkIDComponent2;
+//    ssnetworkID2Source >> networkID2DecSource;
 
-    ssnetworkID3Source << std::hex << networkIDComponent3;
-    ssnetworkID3Source >> networkID3DecSource;
+//    ssnetworkID3Source << std::hex << networkIDComponent3;
+//    ssnetworkID3Source >> networkID3DecSource;
 
-    sshostIDSource << std::hex << hostIDComponent;
-    sshostIDSource >> hostIDDecSource;
+//    sshostIDSource << std::hex << hostIDComponent;
+//    sshostIDSource >> hostIDDecSource;
 
-    m_sourceIPAdress = std::to_string(networkID1DecSource) + "." +
-            std::to_string(networkID2DecSource) + "." +
-            std::to_string(networkID3DecSource) + "." +
-            std::to_string(hostIDDecSource);
-}
+//    m_sourceIPAdress = std::to_string(networkID1DecSource) + "." +
+//            std::to_string(networkID2DecSource) + "." +
+//            std::to_string(networkID3DecSource) + "." +
+//            std::to_string(hostIDDecSource);
+//}
 
 /*!
  * \brief Getter function for parsing the Source IP Address
@@ -190,45 +190,45 @@ std::string UdpPackage::getSourceIPAdress() const
     return m_sourceIPAdress;
 }
 
-/*!
- * \brief Setter function for parsing the destination IP Address
- */
-void UdpPackage::setDestinationIPAdress()
-{
-    const auto destinationIPAdressTemp = convertToHex(m_ipv4Header.substr(10,4), 0);
+///*!
+// * \brief Setter function for parsing the destination IP Address
+// */
+//void UdpPackage::setDestinationIPAdress()
+//{
+//    const auto destinationIPAdressTemp = convertToHex(m_ipv4Header.substr(10,4), 0);
 
-    std::stringstream ssnetworkID1Destination;
-    std::stringstream ssnetworkID2Destination;
-    std::stringstream ssnetworkID3Destination;
-    std::stringstream sshostIDDestination;
+//    std::stringstream ssnetworkID1Destination;
+//    std::stringstream ssnetworkID2Destination;
+//    std::stringstream ssnetworkID3Destination;
+//    std::stringstream sshostIDDestination;
 
-    unsigned int networkID1DecDestination = 0;
-    unsigned int networkID2DecDestination = 0;
-    unsigned int networkID3DecDestination = 0;
-    unsigned int hostIDecDestination = 0;
+//    unsigned int networkID1DecDestination = 0;
+//    unsigned int networkID2DecDestination = 0;
+//    unsigned int networkID3DecDestination = 0;
+//    unsigned int hostIDecDestination = 0;
 
-    std::string networkIDComponent1 = destinationIPAdressTemp.substr(0,2);
-    std::string networkIDComponent2 = destinationIPAdressTemp.substr(2,2);
-    std::string networkIDComponent3 = destinationIPAdressTemp.substr(4,2);
-    std::string hostIDComponent = destinationIPAdressTemp.substr(6,2);
+//    std::string networkIDComponent1 = destinationIPAdressTemp.substr(0,2);
+//    std::string networkIDComponent2 = destinationIPAdressTemp.substr(2,2);
+//    std::string networkIDComponent3 = destinationIPAdressTemp.substr(4,2);
+//    std::string hostIDComponent = destinationIPAdressTemp.substr(6,2);
 
-    ssnetworkID1Destination << std::hex << networkIDComponent1;
-    ssnetworkID1Destination >> networkID1DecDestination;
+//    ssnetworkID1Destination << std::hex << networkIDComponent1;
+//    ssnetworkID1Destination >> networkID1DecDestination;
 
-    ssnetworkID2Destination << std::hex << networkIDComponent2;
-    ssnetworkID2Destination >> networkID2DecDestination;
+//    ssnetworkID2Destination << std::hex << networkIDComponent2;
+//    ssnetworkID2Destination >> networkID2DecDestination;
 
-    ssnetworkID3Destination << std::hex << networkIDComponent3;
-    ssnetworkID3Destination >> networkID3DecDestination;
+//    ssnetworkID3Destination << std::hex << networkIDComponent3;
+//    ssnetworkID3Destination >> networkID3DecDestination;
 
-    sshostIDDestination << std::hex << hostIDComponent;
-    sshostIDDestination >> hostIDecDestination;
+//    sshostIDDestination << std::hex << hostIDComponent;
+//    sshostIDDestination >> hostIDecDestination;
 
-    m_destinationIPAdress = std::to_string(networkID1DecDestination) + "." +
-            std::to_string(networkID2DecDestination) + "." +
-            std::to_string(networkID3DecDestination) + "." +
-            std::to_string(hostIDecDestination);
-}
+//    m_destinationIPAdress = std::to_string(networkID1DecDestination) + "." +
+//            std::to_string(networkID2DecDestination) + "." +
+//            std::to_string(networkID3DecDestination) + "." +
+//            std::to_string(hostIDecDestination);
+//}
 
 /*!
  * \brief Getter function for parsing the Destination IP Address

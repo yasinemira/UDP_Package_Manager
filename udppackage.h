@@ -25,6 +25,7 @@ class UdpPackage : public QObject
 ***/
 
     Q_PROPERTY(QString ethernetFrameHeader READ getEthernetFrameHeader CONSTANT)
+    Q_PROPERTY(QString ipv4Header READ getIpv4Header CONSTANT)
     Q_PROPERTY(QString payload READ getPayload CONSTANT)
     Q_PROPERTY(QString udpChecksum READ getUdpChecksum CONSTANT)
     //Q_PROPERTY(int payload READ getPayloadLength CONSTANT)
@@ -60,7 +61,7 @@ public slots:
      * would like to see or use each component of the UDP packet individually
     **/
     QString getEthernetFrameHeader() const;
-    std::string getIpv4Header() const;
+    QString getIpv4Header() const;
     std::string getIpv4HeaderChecksum() const;
     std::string getSourceIPAdress() const;
     std::string getDestinationIPAdress () const;
@@ -75,7 +76,7 @@ public slots:
 
 private:
     QString m_ethernetFrameHeader;
-    std::string m_ipv4Header;
+    QString m_ipv4Header;
     std::string m_ipv4HeaderChecksum;
     std::string m_sourceIPAdress;
     std::string m_destinationIPAdress;
