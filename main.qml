@@ -4,7 +4,7 @@ import QtQuick.Layouts 1.12
 
 Window {
     visible: true
-    width: 12150
+    width: 1280
     height: 720
     color: "#2e4147"
     title: qsTr("Hello World")
@@ -80,8 +80,9 @@ Window {
         }
 
         DataContainer {
-            id: _payload
-            componentDetail: ""
+            id: _payload            
+            width: 550
+            componentDetail: udpInstance.payload
         }
     }
 }

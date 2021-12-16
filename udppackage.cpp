@@ -65,8 +65,8 @@ void UdpPackage::displayPackageDetails(char* ethernetPacket, int packetLength)
                 "\n■ Source port: " << getSourcePort() << std::endl <<
                 "\n■ Destination port: " << getDestinationPort() << std::endl;
     qDebug() << "\n■ UDP Checksum: " << getUdpChecksum();
-    std::cout <<"\n■ UDP Payload: " << convertToHex(getPayload(), 1) << std::endl <<
-                "\n■ UDP Payload size: " << getPayload().size() << std::endl <<
+    qDebug() << "\n■ UDP Payload: " << m_payload;
+    std::cout<< "\n■ UDP Payload size: " << m_payloadLength << std::endl <<
                 "\n■ UDP Main Packet: " << convertToHex(getMainPacket(), 1) << std::endl <<
                 "\n■ UDP Packet size: " << getMainPacket().size();
 }
@@ -345,17 +345,34 @@ void UdpPackage::setPayload(char* ethernetPacket, int packetLength)
         tempString << ethernetPacket[i]; // Buffering the UDP Header component
     }
 
-    m_payload = tempString.str();
+    m_payload = QString::fromStdString(convertToHex(tempString.str(), 1));
 }
 
 /*!
  * \brief Getter function for parsing the Payload
  * \return Payload content
  */
-std::string UdpPackage::getPayload() const
+QString UdpPackage::getPayload() const
 {
     return m_payload;
 }
+
+///*!
+// * \brief Setter function for parsing main the payload size
+// */
+//void UdpPackage::setPayloadLength()
+//{
+//    m_payloadLength = m_packetLength - ethernetFramelength + ipv4HeaderLength + udpHeaderLength;
+//}
+//
+///*!
+// * \brief Getter function for parsing the payload length
+// * \return Payload size
+// */
+//int UdpPackage::getPayloadLength() const
+//{
+//    return m_payloadLength;
+//}
 
 /*!
  * \brief Setter function for parsing the whole package at once
@@ -381,7 +398,7 @@ std::string UdpPackage::getMainPacket() const
 }
 
 /*!
- * \brief Getter function for parsing main the packet size
+ * \brief Setter function for parsing main the packet size
  */
 void UdpPackage::setPacketLength(int packetLength)
 {

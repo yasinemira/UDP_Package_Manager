@@ -25,7 +25,9 @@ class UdpPackage : public QObject
 ***/
 
     Q_PROPERTY(QString ethernetFrameHeader READ getEthernetFrameHeader CONSTANT)
+    Q_PROPERTY(QString payload READ getPayload CONSTANT)
     Q_PROPERTY(QString udpChecksum READ getUdpChecksum CONSTANT)
+    //Q_PROPERTY(int payload READ getPayloadLength CONSTANT)
     Q_PROPERTY(int packetLength READ getPacketLength NOTIFY packetLengthChanged)
 
 public:
@@ -44,6 +46,7 @@ public:
     void setUdpChecksum();
     void setPayload(char* ethernetPacket, int packetLength);
     void setMainPacket(char* ethernetPacket, int packetLength);
+    //void setPayloadLength();
     void setPacketLength(int packetLength);
 
     void displayPackageDetails(char* ethernetPacket, int packetLength);
@@ -65,8 +68,9 @@ public slots:
     std::string getSourcePort() const;
     std::string getDestinationPort() const;
     QString getUdpChecksum() const;
-    std::string getPayload() const;
+    QString getPayload() const;
     std::string getMainPacket() const;
+    //int getPayloadLength() const;
     int getPacketLength() const;
 
 private:
@@ -79,8 +83,9 @@ private:
     std::string m_sourcePort;
     std::string m_destinationPort;
     QString m_udpChecksum;
-    std::string m_payload;
+    QString m_payload;
     std::string m_mainPacket;
+    int m_payloadLength;
     int m_packetLength;
 
     std::string convertToHex(const std::string& frameData, bool spaceSelection);

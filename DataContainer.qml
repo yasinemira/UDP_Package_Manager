@@ -27,6 +27,7 @@ Rectangle {
         anchors.fill: parent
         anchors.centerIn: parent
         text: root.componentDetail
+        wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.pixelSize: 12
