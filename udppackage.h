@@ -24,8 +24,8 @@ class UdpPackage : public QObject
 
 ***/
 
-    Q_PROPERTY(QString ethernetFrameHeader READ getEthernetFrameHeader)
-    Q_PROPERTY(QString udpChecksum READ getUdpChecksum NOTIFY udpChecksumChanged)
+    Q_PROPERTY(QString ethernetFrameHeader READ getEthernetFrameHeader CONSTANT)
+    Q_PROPERTY(QString udpChecksum READ getUdpChecksum CONSTANT)
     Q_PROPERTY(int packetLength READ getPacketLength NOTIFY packetLengthChanged)
 
 public:
@@ -49,7 +49,6 @@ public:
     void displayPackageDetails(char* ethernetPacket, int packetLength);
 
 signals:
-    void udpChecksumChanged(QString& checkSumData);
     void packetLengthChanged(int packetLength);
 
 public slots:
@@ -59,7 +58,7 @@ public slots:
     **/
     QString getEthernetFrameHeader() const;
     std::string getIpv4Header() const;
-    std::string getIpHeaderChecksum() const;
+    std::string getIpv4HeaderChecksum() const;
     std::string getSourceIPAdress() const;
     std::string getDestinationIPAdress () const;
     std::string getUdpHeader() const;

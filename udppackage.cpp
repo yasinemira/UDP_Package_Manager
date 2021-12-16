@@ -58,7 +58,7 @@ void UdpPackage::displayPackageDetails(char* ethernetPacket, int packetLength)
 
     qDebug() << "■ Ethernet frame header: " << m_ethernetFrameHeader;
     std::cout <<"\n■ IPv4 header: " << convertToHex(getIpv4Header(), 1) << std::endl <<
-                "\n■ IPv4 header checksum: " << getIpHeaderChecksum() << std::endl <<
+                "\n■ IPv4 header checksum: " << getIpv4HeaderChecksum() << std::endl <<
                 "\n■ Source IP Address: " << getSourceIPAdress() << std::endl <<
                 "\n■ Destination IP Address: " << getDestinationIPAdress() << std::endl <<
                 "\n■ UDP header: " << convertToHex(getUdpHeader(), 1) << std::endl <<
@@ -86,6 +86,15 @@ void UdpPackage::setEthernetFrameHeader(char* ethernetPacket, int packetLength)
 }
 
 /*!
+ * \brief Getter function for parsing the Ethernet Frame Header
+ * \return Ethernet Frame Header content - 20 byte
+ */
+QString UdpPackage::getEthernetFrameHeader() const
+{
+    return m_ethernetFrameHeader;
+}
+
+/*!
  * \brief Setter function for parsing the IPv4 Header
  */
 void UdpPackage::setIpv4Header(char* ethernetPacket)
@@ -97,6 +106,15 @@ void UdpPackage::setIpv4Header(char* ethernetPacket)
     }
 
     m_ipv4Header = tempString.str();
+}
+
+/*!
+ * \brief Getter function for parsing the IPv4 Header
+ * \return IPv4 Header content - 14 byte
+ */
+std::string UdpPackage::getIpv4Header() const
+{
+    return m_ipv4Header;
 }
 
 /*!
@@ -112,6 +130,15 @@ void UdpPackage::setIpv4HeaderChecksum()
     ssIPHeaderChecksum >> ipv4HeaderChecksumDec;
 
     m_ipv4HeaderChecksum = std::to_string(ipv4HeaderChecksumDec);
+}
+
+/*!
+ * \brief Getter function for parsing the IP checksum from IPv4 Header
+ * \return IPv4 header checksum content - 2 byte
+ */
+std::string UdpPackage::getIpv4HeaderChecksum() const
+{
+    return m_ipv4HeaderChecksum;
 }
 
 /*!
@@ -155,6 +182,15 @@ void UdpPackage::setSourceIPAdress()
 }
 
 /*!
+ * \brief Getter function for parsing the Source IP Address
+ * \return Source IP Address - 4 byte
+ */
+std::string UdpPackage::getSourceIPAdress() const
+{
+    return m_sourceIPAdress;
+}
+
+/*!
  * \brief Setter function for parsing the destination IP Address
  */
 void UdpPackage::setDestinationIPAdress()
@@ -195,6 +231,15 @@ void UdpPackage::setDestinationIPAdress()
 }
 
 /*!
+ * \brief Getter function for parsing the Destination IP Address
+ * \return Destination IP Address - 4 byte
+ */
+std::string UdpPackage::getDestinationIPAdress() const
+{
+    return m_destinationIPAdress;
+}
+
+/*!
  * \brief Setter function for parsing the UDP Header
  */
 void UdpPackage::setUdpHeader(char* ethernetPacket)
@@ -206,6 +251,15 @@ void UdpPackage::setUdpHeader(char* ethernetPacket)
     }
 
     m_udpHeader = tempString.str();
+}
+
+/*!
+ * \brief Getter function for parsing the UDP Header frame
+ * \return UDP Header frame content  - 8 byte
+ */
+std::string UdpPackage::getUdpHeader() const
+{
+    return m_udpHeader;
 }
 
 /*!
@@ -224,6 +278,15 @@ void UdpPackage::setSourcePort()
 }
 
 /*!
+ * \brief Getter function for parsing the source port from UDP header
+ * \return Source port content - 2 byte
+ */
+std::string UdpPackage::getSourcePort() const
+{
+    return m_sourcePort;
+}
+
+/*!
  * \brief Setter function for parsing the destination port
  */
 void UdpPackage::setDestinationPort()
@@ -239,6 +302,15 @@ void UdpPackage::setDestinationPort()
 }
 
 /*!
+ * \brief Getter function for parsing the destination port from UDP header
+ * \return Destination port content - 2 byte
+ */
+std::string UdpPackage::getDestinationPort() const
+{
+    return m_destinationPort;
+}
+
+/*!
  * \brief Setter function for parsing the UDP Checksum
  */
 void UdpPackage::setUdpChecksum()
@@ -251,7 +323,15 @@ void UdpPackage::setUdpChecksum()
     ssUDPHeaderChecksum >> udpHeaderChecksumDec;
 
     m_udpChecksum = QString::number(udpHeaderChecksumDec);
-    emit udpChecksumChanged(m_udpChecksum);
+}
+
+/*!
+ * \brief Getter function for parsing the UDP checksum from UDP header
+ * \return UDP checksum content - 2 byte
+ */
+QString UdpPackage::getUdpChecksum() const
+{
+    return m_udpChecksum;
 }
 
 /*!
@@ -269,6 +349,15 @@ void UdpPackage::setPayload(char* ethernetPacket, int packetLength)
 }
 
 /*!
+ * \brief Getter function for parsing the Payload
+ * \return Payload content
+ */
+std::string UdpPackage::getPayload() const
+{
+    return m_payload;
+}
+
+/*!
  * \brief Setter function for parsing the whole package at once
  */
 void UdpPackage::setMainPacket(char* ethernetPacket, int packetLength)
@@ -282,101 +371,6 @@ void UdpPackage::setMainPacket(char* ethernetPacket, int packetLength)
     }
 }
 
-void UdpPackage::setPacketLength(int packetLength)
-{
-    m_packetLength = packetLength;
-}
-
-/*!
- * \brief Getter function for parsing the Ethernet Frame Header
- * \return Ethernet Frame Header content - 20 byte
- */
-QString UdpPackage::getEthernetFrameHeader() const
-{
-    return m_ethernetFrameHeader;
-}
-
-/*!
- * \brief Getter function for parsing the IPv4 Header
- * \return IPv4 Header content - 14 byte
- */
-std::string UdpPackage::getIpv4Header() const
-{
-    return m_ipv4Header;
-}
-
-/*!
- * \brief Getter function for parsing the IP checksum from IPv4 Header
- * \return IPv4 header checksum content - 2 byte
- */
-std::string UdpPackage::getIpHeaderChecksum() const
-{
-    return m_ipv4HeaderChecksum;
-}
-
-/*!
- * \brief Getter function for parsing the Source IP Address
- * \return Source IP Address - 4 byte
- */
-std::string UdpPackage::getSourceIPAdress() const
-{
-    return m_sourceIPAdress;
-}
-
-/*!
- * \brief Getter function for parsing the Destination IP Address
- * \return Destination IP Address - 4 byte
- */
-std::string UdpPackage::getDestinationIPAdress() const
-{
-    return m_destinationIPAdress;
-}
-
-/*!
- * \brief Getter function for parsing the UDP Header frame
- * \return UDP Header frame content  - 8 byte
- */
-std::string UdpPackage::getUdpHeader() const
-{
-    return m_udpHeader;
-}
-
-/*!
- * \brief Getter function for parsing the source port from UDP header
- * \return Source port content - 2 byte
- */
-std::string UdpPackage::getSourcePort() const
-{
-    return m_sourcePort;
-}
-
-/*!
- * \brief Getter function for parsing the destination port from UDP header
- * \return Destination port content - 2 byte
- */
-std::string UdpPackage::getDestinationPort() const
-{
-    return m_destinationPort;
-}
-
-/*!
- * \brief Getter function for parsing the UDP checksum from UDP header
- * \return UDP checksum content - 2 byte
- */
-QString UdpPackage::getUdpChecksum() const
-{
-    return m_udpChecksum;
-}
-
-/*!
- * \brief Getter function for parsing the Payload
- * \return Payload content
- */
-std::string UdpPackage::getPayload() const
-{
-    return m_payload;
-}
-
 /*!
  * \brief Getter function for parsing the whole UDP Packet
  * \return UDP Packet content
@@ -387,8 +381,16 @@ std::string UdpPackage::getMainPacket() const
 }
 
 /*!
+ * \brief Getter function for parsing main the packet size
+ */
+void UdpPackage::setPacketLength(int packetLength)
+{
+    m_packetLength = packetLength;
+}
+
+/*!
  * \brief Getter function for parsing the packet length
- * \return UDP Packet content
+ * \return Main packet size
  */
 int UdpPackage::getPacketLength() const
 {
@@ -399,6 +401,7 @@ int UdpPackage::getPacketLength() const
  * \brief String to Hex conversion operation
  * \param frameData - relevant part of the packet to be used for conversion
  * \param spaceSelection - selection option up to user for printing out -> 0: no space, 1: space
+ * \return To-hex-converted value of the relevant frame
  */
 std::string UdpPackage::convertToHex(const std::string &frameData, bool spaceSelection) {
 
