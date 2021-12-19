@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>DataContainer.qml</file>
+        <file>ComponentLabel.qml</file>
+        <file>ComponentDetailGeneric.qml</file>
     </qresource>
 </RCC>

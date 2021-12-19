@@ -5,9 +5,9 @@ import QtQuick.Layouts 1.12
 Window {
     visible: true
     width: 1280
-    height: 720
-    color: "#2e4147"
-    title: qsTr("Hello World")
+    height: 900
+    color: "#0b3945"
+    title: qsTr("UDP Package Analyzer")
 
     QtObject {
         id: internal
@@ -19,69 +19,84 @@ Window {
 
     ColumnLayout {
         id: _udpPackageComponents
+        width: 1075
+        height: 740
+        anchors.verticalCenterOffset: 0
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: 60
+        anchors.rightMargin: 100
         spacing: 5
 
-
-        DataContainer {
+        ComponentDetailGeneric {
             id: _ethernetFrameHeader
-            width: 400
-            componentDetail: udpInstance.ethernetFrameHeader
-        }
-        DataContainer {
-            id: _ipv4Header            
-            width: 280
-            componentDetail: udpInstance.ipv4Header
+            dataContainerWidth: 450
+            componentDefinition: "Ethernet Frame Header / 20-bytes"
+            componentValue: udpInstance.ethernetFrameHeader
         }
 
-        DataContainer {
+        ComponentDetailGeneric {
+            id: _ipv4Header
+            dataContainerWidth: 340
+            componentDefinition: "IPv4 Header / 14-bytes"
+            componentValue: udpInstance.ipv4Header
+        }
+
+        ComponentDetailGeneric {
             id: _ipv4HeaderChecksum
-            width: 150
-            componentDetail: udpInstance.ipv4HeaderChecksum
+            dataContainerWidth: 150
+            componentDefinition: "IPv4 Header Checksum / 2-bytes"
+            componentValue: udpInstance.ipv4HeaderChecksum
         }
 
-        DataContainer {
+        ComponentDetailGeneric {
             id: _sourceIPAdress
-            width: 150
-            componentDetail: udpInstance.sourceIPAdress
+            dataContainerWidth: 150
+            componentDefinition: "Source IP-Address / 2-bytes"
+            componentValue: udpInstance.sourceIPAdress
         }
 
-        DataContainer {
+        ComponentDetailGeneric {
             id: _destinationIPAdress
-            width: 150
-            componentDetail: udpInstance.destinationIPAdress
+            dataContainerWidth: 150
+            componentDefinition: "Destination IP-Address / 4-bytes"
+            componentValue: udpInstance.destinationIPAdress
         }
 
-        DataContainer {
+        ComponentDetailGeneric {
             id: _udpHeader
-            width: 200
-            componentDetail: udpInstance.udpHeader
+            dataContainerWidth: 200
+            componentDefinition: "UDP Header / 8-bytes"
+            componentValue: udpInstance.udpHeader
         }
 
-        DataContainer {
+        ComponentDetailGeneric {
             id: _sourcePort
-            width: 150
-            componentDetail: udpInstance.sourcePort
+            dataContainerWidth: 150
+            componentDefinition: "Source Port / 2-bytes"
+            componentValue: udpInstance.sourcePort
         }
 
-        DataContainer {
+        ComponentDetailGeneric {
             id: _destinationPort
-            width: 150
-            componentDetail: udpInstance.destinationPort
+            dataContainerWidth: 150
+            componentDefinition: "Destination Port / 2-bytes"
+            componentValue: udpInstance.destinationPort
         }
 
-        DataContainer {
+        ComponentDetailGeneric {
             id: _udpChecksum
-            width: 150
-            componentDetail: udpInstance.udpChecksum
+            dataContainerWidth: 150
+            componentDefinition: "UDP Checksum / 2-bytes"
+            componentValue: udpInstance.udpChecksum
         }
 
-        DataContainer {
-            id: _payload            
-            width: 550
-            componentDetail: udpInstance.payload
+        ComponentDetailGeneric {
+            id: _payload
+            dataContainerWidth: 600
+            dataContainerHeight: 85
+            height: 80
+            componentDefinition: "Payload / " + udpInstance.payloadLength + "-bytes"
+            componentValue: udpInstance.payload
         }
     }
 }
