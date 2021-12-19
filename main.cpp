@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
     };
 
     UdpPackage packageInstance((char*)packet, len);
-    packageInstance.displayPackageDetails((char*)packet, len);
+    packageInstance.displayPackageDetails();
 
     QQmlApplicationEngine engine;
     QQmlContext* rootContext = engine.rootContext();

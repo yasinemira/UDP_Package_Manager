@@ -40,7 +40,7 @@ Window {
         DataContainer {
             id: _ipv4HeaderChecksum
             width: 150
-            componentDetail: ""
+            componentDetail: udpInstance.ipv4HeaderChecksum
         }
 
         DataContainer {

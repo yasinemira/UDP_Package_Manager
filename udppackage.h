@@ -26,6 +26,7 @@ class UdpPackage : public QObject
 
     Q_PROPERTY(QString ethernetFrameHeader READ getEthernetFrameHeader CONSTANT)
     Q_PROPERTY(QString ipv4Header READ getIpv4Header CONSTANT)
+    Q_PROPERTY(QString ipv4HeaderChecksum READ getIpv4HeaderChecksum CONSTANT)
     Q_PROPERTY(QString payload READ getPayload CONSTANT)
     Q_PROPERTY(QString udpChecksum READ getUdpChecksum CONSTANT)
     //Q_PROPERTY(int payload READ getPayloadLength CONSTANT)
@@ -38,7 +39,7 @@ public:
 
     void setEthernetFrameHeader(char* ethernetPacket, int packetLength);
     void setIpv4Header(char* ethernetPacket);
-    void setIpv4HeaderChecksum();
+    void setIpv4HeaderChecksum(char* ethernetPacket);
     void setSourceIPAdress();
     void setDestinationIPAdress();
     void setUdpHeader(char* ethernetPacket);
@@ -50,7 +51,7 @@ public:
     //void setPayloadLength();
     void setPacketLength(int packetLength);
 
-    void displayPackageDetails(char* ethernetPacket, int packetLength);
+    void displayPackageDetails();
 
 signals:
     void packetLengthChanged(int packetLength);
@@ -62,7 +63,7 @@ public slots:
     **/
     QString getEthernetFrameHeader() const;
     QString getIpv4Header() const;
-    std::string getIpv4HeaderChecksum() const;
+    QString getIpv4HeaderChecksum() const;
     std::string getSourceIPAdress() const;
     std::string getDestinationIPAdress () const;
     std::string getUdpHeader() const;
@@ -77,7 +78,7 @@ public slots:
 private:
     QString m_ethernetFrameHeader;
     QString m_ipv4Header;
-    std::string m_ipv4HeaderChecksum;
+    QString m_ipv4HeaderChecksum;
     std::string m_sourceIPAdress;
     std::string m_destinationIPAdress;
     std::string m_udpHeader;

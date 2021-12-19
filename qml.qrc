@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>DataContainer.qml</file>
+    </qresource>
+</RCC>

@@ -32,7 +32,7 @@ UdpPackage::UdpPackage(char* ethernetPacket, int packetLength)
     setMainPacket(ethernetPacket, packetLength);
     setEthernetFrameHeader(ethernetPacket, packetLength);
     setIpv4Header(ethernetPacket);
-    //setIpv4HeaderChecksum();
+    setIpv4HeaderChecksum(ethernetPacket);
     //setSourceIPAdress();
     //setDestinationIPAdress();
     setUdpHeader(ethernetPacket);
@@ -42,24 +42,12 @@ UdpPackage::UdpPackage(char* ethernetPacket, int packetLength)
     setPayload(ethernetPacket, packetLength);
 }
 
-void UdpPackage::displayPackageDetails(char* ethernetPacket, int packetLength)
+void UdpPackage::displayPackageDetails()
 {
-    setMainPacket(ethernetPacket, packetLength);
-    setEthernetFrameHeader(ethernetPacket, packetLength);
-    setIpv4Header(ethernetPacket);
-    //setIpv4HeaderChecksum();
-    //setSourceIPAdress();
-    //setDestinationIPAdress();
-    setUdpHeader(ethernetPacket);
-    setSourcePort();
-    setDestinationPort();
-    setUdpChecksum();
-    setPayload(ethernetPacket, packetLength);
-
     qDebug() << "■ Ethernet frame header: " << m_ethernetFrameHeader;
     qDebug() <<"\n■ IPv4 header: " << m_ipv4Header;
-    std::cout<<"\n■ IPv4 header checksum: " << getIpv4HeaderChecksum() << std::endl <<
-                "\n■ Source IP Address: " << getSourceIPAdress() << std::endl <<
+    qDebug() <<"\n■ IPv4 header checksum: " << getIpv4HeaderChecksum();
+    std::cout <<            "\n■ Source IP Address: " << getSourceIPAdress() << std::endl <<
                 "\n■ Destination IP Address: " << getDestinationIPAdress() << std::endl <<
                 "\n■ UDP header: " << convertToHex(getUdpHeader(), 1) << std::endl <<
                 "\n■ Source port: " << getSourcePort() << std::endl <<
@@ -120,23 +108,22 @@ QString UdpPackage::getIpv4Header() const
 /*!
  * \brief Setter function for parsing the IPv4 Header Checksum
  */
-//void UdpPackage::setIpv4HeaderChecksum()
-//{
-//    const auto ipv4HeaderChecksumTemp = convertToHex(m_ipv4Header.substr(4,2), 0);
-//    unsigned int ipv4HeaderChecksumDec = 0;
+void UdpPackage::setIpv4HeaderChecksum(char* ethernetPacket)
+{
+    std::stringstream tempString;
 
-//    std::stringstream ssIPHeaderChecksum;
-//    ssIPHeaderChecksum << std::hex << ipv4HeaderChecksumTemp;
-//    ssIPHeaderChecksum >> ipv4HeaderChecksumDec;
+    for (int i = ethernetFramelength; i < (ethernetFramelength + ipv4HeaderLength); ++i) {
+        tempString << ethernetPacket[i]; // Buffering IPv4 frame header component
+    }
 
-//    m_ipv4HeaderChecksum = std::to_string(ipv4HeaderChecksumDec);
-//}
+    m_ipv4HeaderChecksum = QString::fromStdString(convertToHex(tempString.str().substr(4,2), 0));
+}
 
 /*!
  * \brief Getter function for parsing the IP checksum from IPv4 Header
  * \return IPv4 header checksum content - 2 byte
  */
-std::string UdpPackage::getIpv4HeaderChecksum() const
+QString UdpPackage::getIpv4HeaderChecksum() const
 {
     return m_ipv4HeaderChecksum;
 }
