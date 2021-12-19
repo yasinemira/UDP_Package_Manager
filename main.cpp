@@ -11,9 +11,6 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    //UdpPackage udpPackage;
-    //qmlRegisterType<UdpPackage>("UdpPackage", 1, 0, "UdpPackage");
-
     int len = 98;
 
     /* Frame (98 bytes) */
@@ -35,6 +32,8 @@ int main(int argc, char *argv[])
 
     UdpPackage packageInstance((char*)packet, len);
     packageInstance.displayPackageDetails();
+
+    /***---------- Setting up the UI engine ----------***/
 
     QQmlApplicationEngine engine;
     QQmlContext* rootContext = engine.rootContext();

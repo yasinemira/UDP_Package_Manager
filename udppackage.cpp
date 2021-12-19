@@ -29,34 +29,36 @@ UdpPackage::~UdpPackage()
 
 UdpPackage::UdpPackage(char* ethernetPacket, int packetLength)
 {
-    setMainPacket(ethernetPacket, packetLength);
     setEthernetFrameHeader(ethernetPacket, packetLength);
     setIpv4Header(ethernetPacket);
     setIpv4HeaderChecksum(ethernetPacket);
-    //setSourceIPAdress();
-    //setDestinationIPAdress();
+    setSourceIPAdress(ethernetPacket);
+    setDestinationIPAdress(ethernetPacket);
     setUdpHeader(ethernetPacket);
-    setSourcePort();
-    setDestinationPort();
-    setUdpChecksum();
+    setSourcePort(ethernetPacket);
+    setDestinationPort(ethernetPacket);
+    setUdpChecksum(ethernetPacket);
     setPayload(ethernetPacket, packetLength);
+    setMainPacket(ethernetPacket, packetLength);
+    setPacketLength(packetLength);
+    setPayloadLength();
 }
 
 void UdpPackage::displayPackageDetails()
 {
-    qDebug() << "■ Ethernet frame header: " << m_ethernetFrameHeader;
-    qDebug() <<"\n■ IPv4 header: " << m_ipv4Header;
-    qDebug() <<"\n■ IPv4 header checksum: " << getIpv4HeaderChecksum();
-    std::cout <<            "\n■ Source IP Address: " << getSourceIPAdress() << std::endl <<
-                "\n■ Destination IP Address: " << getDestinationIPAdress() << std::endl <<
-                "\n■ UDP header: " << convertToHex(getUdpHeader(), 1) << std::endl <<
-                "\n■ Source port: " << getSourcePort() << std::endl <<
-                "\n■ Destination port: " << getDestinationPort() << std::endl;
-    qDebug() << "\n■ UDP Checksum: " << getUdpChecksum();
-    qDebug() << "\n■ UDP Payload: " << m_payload;
-    //std::cout<< "\n■ UDP Payload size: " << getPayload().size()  << std::endl <<
-    std::cout<< "\n■ UDP Main Packet: " << convertToHex(getMainPacket(), 1) << std::endl <<
-                "\n■ UDP Packet size: " << getMainPacket().size();
+    qDebug() << "■ Ethernet frame header: " << m_ethernetFrameHeader <<
+                "\n■ IPv4 header: " << m_ipv4Header <<
+                "\n■ IPv4 header checksum: " << m_ipv4HeaderChecksum <<
+                "\n■ Source IP Address: " << m_sourceIPAdress <<
+                "\n■ Destination IP Address: " << m_destinationIPAdress <<
+                "\n■ UDP header: " << m_udpHeader <<
+                "\n■ Source port: " << m_sourcePort <<
+                "\n■ Destination port: " << m_destinationPort <<
+                "\n■ UDP Checksum: " << getUdpChecksum() <<
+                "\n■ UDP Payload: " << m_payload <<
+                "\n■ UDP Payload size: " << m_payloadLength <<
+                "\n■ UDP Main Packet: " << m_mainPacket <<
+                "\n■ UDP Packet size: " << m_packetLength;
 }
 
 /*!
@@ -116,7 +118,7 @@ void UdpPackage::setIpv4HeaderChecksum(char* ethernetPacket)
         tempString << ethernetPacket[i]; // Buffering IPv4 frame header component
     }
 
-    m_ipv4HeaderChecksum = QString::fromStdString(convertToHex(tempString.str().substr(4,2), 0));
+    m_ipv4HeaderChecksum = "0x" + QString::fromStdString(convertToHex(tempString.str().substr(4,2), 0));
 }
 
 /*!
@@ -131,97 +133,111 @@ QString UdpPackage::getIpv4HeaderChecksum() const
 /*!
  * \brief Setter function for parsing the source IP Address
  */
-//void UdpPackage::setSourceIPAdress()
-//{
-//    const auto sourceIPAdressTemp = convertToHex(m_ipv4Header.substr(6,4), 0);
+void UdpPackage::setSourceIPAdress(char* ethernetPacket)
+{
+    std::string sourceIPAdressTemp;
+    std::stringstream tempString;
 
-//    std::stringstream ssnetworkID1Source;
-//    std::stringstream ssnetworkID2Source;
-//    std::stringstream ssnetworkID3Source;
-//    std::stringstream sshostIDSource;
+    for (int i = ethernetFramelength; i < (ethernetFramelength + ipv4HeaderLength); ++i) {
+        tempString << ethernetPacket[i]; // Buffering IPv4 frame header component
+    }
 
-//    unsigned int networkID1DecSource = 0;
-//    unsigned int networkID2DecSource = 0;
-//    unsigned int networkID3DecSource = 0;
-//    unsigned int hostIDDecSource = 0;
+    sourceIPAdressTemp = convertToHex(tempString.str().substr(6,4), 0);
 
-//    std::string networkIDComponent1 = sourceIPAdressTemp.substr(0,2);
-//    std::string networkIDComponent2 = sourceIPAdressTemp.substr(2,2);
-//    std::string networkIDComponent3 = sourceIPAdressTemp.substr(4,2);
-//    std::string hostIDComponent = sourceIPAdressTemp.substr(6,2);
+    std::stringstream ssnetworkID1Source;
+    std::stringstream ssnetworkID2Source;
+    std::stringstream ssnetworkID3Source;
+    std::stringstream sshostIDSource;
 
-//    ssnetworkID1Source << std::hex << networkIDComponent1;
-//    ssnetworkID1Source >> networkID1DecSource;
+    unsigned int networkID1DecSource = 0;
+    unsigned int networkID2DecSource = 0;
+    unsigned int networkID3DecSource = 0;
+    unsigned int hostIDDecSource = 0;
 
-//    ssnetworkID2Source << std::hex << networkIDComponent2;
-//    ssnetworkID2Source >> networkID2DecSource;
+    std::string networkIDComponent1 = sourceIPAdressTemp.substr(0,2);
+    std::string networkIDComponent2 = sourceIPAdressTemp.substr(2,2);
+    std::string networkIDComponent3 = sourceIPAdressTemp.substr(4,2);
+    std::string hostIDComponent = sourceIPAdressTemp.substr(6,2);
 
-//    ssnetworkID3Source << std::hex << networkIDComponent3;
-//    ssnetworkID3Source >> networkID3DecSource;
+    ssnetworkID1Source << std::hex << networkIDComponent1;
+    ssnetworkID1Source >> networkID1DecSource;
 
-//    sshostIDSource << std::hex << hostIDComponent;
-//    sshostIDSource >> hostIDDecSource;
+    ssnetworkID2Source << std::hex << networkIDComponent2;
+    ssnetworkID2Source >> networkID2DecSource;
 
-//    m_sourceIPAdress = std::to_string(networkID1DecSource) + "." +
-//            std::to_string(networkID2DecSource) + "." +
-//            std::to_string(networkID3DecSource) + "." +
-//            std::to_string(hostIDDecSource);
-//}
+    ssnetworkID3Source << std::hex << networkIDComponent3;
+    ssnetworkID3Source >> networkID3DecSource;
+
+    sshostIDSource << std::hex << hostIDComponent;
+    sshostIDSource >> hostIDDecSource;
+
+    m_sourceIPAdress = QString::number(networkID1DecSource) + "." +
+                       QString::number(networkID2DecSource) + "." +
+                       QString::number(networkID3DecSource) + "." +
+                       QString::number(hostIDDecSource);
+}
 
 /*!
  * \brief Getter function for parsing the Source IP Address
  * \return Source IP Address - 4 byte
  */
-std::string UdpPackage::getSourceIPAdress() const
+QString UdpPackage::getSourceIPAdress() const
 {
     return m_sourceIPAdress;
 }
 
-///*!
-// * \brief Setter function for parsing the destination IP Address
-// */
-//void UdpPackage::setDestinationIPAdress()
-//{
-//    const auto destinationIPAdressTemp = convertToHex(m_ipv4Header.substr(10,4), 0);
+/*!
+ * \brief Setter function for parsing the destination IP Address
+ */
+void UdpPackage::setDestinationIPAdress(char* ethernetPacket)
+{
+    std::string destinationIPAdressTemp;
+    std::stringstream tempString;
 
-//    std::stringstream ssnetworkID1Destination;
-//    std::stringstream ssnetworkID2Destination;
-//    std::stringstream ssnetworkID3Destination;
-//    std::stringstream sshostIDDestination;
+    for (int i = ethernetFramelength; i < (ethernetFramelength + ipv4HeaderLength); ++i) {
+        tempString << ethernetPacket[i]; // Buffering IPv4 frame header component
+    }
 
-//    unsigned int networkID1DecDestination = 0;
-//    unsigned int networkID2DecDestination = 0;
-//    unsigned int networkID3DecDestination = 0;
-//    unsigned int hostIDecDestination = 0;
+    destinationIPAdressTemp = convertToHex(tempString.str().substr(10,4), 0);
 
-//    std::string networkIDComponent1 = destinationIPAdressTemp.substr(0,2);
-//    std::string networkIDComponent2 = destinationIPAdressTemp.substr(2,2);
-//    std::string networkIDComponent3 = destinationIPAdressTemp.substr(4,2);
-//    std::string hostIDComponent = destinationIPAdressTemp.substr(6,2);
+    std::stringstream ssnetworkID1Destination;
+    std::stringstream ssnetworkID2Destination;
+    std::stringstream ssnetworkID3Destination;
+    std::stringstream sshostIDDestination;
 
-//    ssnetworkID1Destination << std::hex << networkIDComponent1;
-//    ssnetworkID1Destination >> networkID1DecDestination;
+    unsigned int networkID1DecDestination = 0;
+    unsigned int networkID2DecDestination = 0;
+    unsigned int networkID3DecDestination = 0;
+    unsigned int hostIDecDestination = 0;
 
-//    ssnetworkID2Destination << std::hex << networkIDComponent2;
-//    ssnetworkID2Destination >> networkID2DecDestination;
+    std::string networkIDComponent1 = destinationIPAdressTemp.substr(0,2);
+    std::string networkIDComponent2 = destinationIPAdressTemp.substr(2,2);
+    std::string networkIDComponent3 = destinationIPAdressTemp.substr(4,2);
+    std::string hostIDComponent = destinationIPAdressTemp.substr(6,2);
 
-//    ssnetworkID3Destination << std::hex << networkIDComponent3;
-//    ssnetworkID3Destination >> networkID3DecDestination;
+    ssnetworkID1Destination << std::hex << networkIDComponent1;
+    ssnetworkID1Destination >> networkID1DecDestination;
 
-//    sshostIDDestination << std::hex << hostIDComponent;
-//    sshostIDDestination >> hostIDecDestination;
+    ssnetworkID2Destination << std::hex << networkIDComponent2;
+    ssnetworkID2Destination >> networkID2DecDestination;
 
-//    m_destinationIPAdress = std::to_string(networkID1DecDestination) + "." +
-//            std::to_string(networkID2DecDestination) + "." +
-//            std::to_string(networkID3DecDestination) + "." +
-//            std::to_string(hostIDecDestination);
-//}
+    ssnetworkID3Destination << std::hex << networkIDComponent3;
+    ssnetworkID3Destination >> networkID3DecDestination;
+
+    sshostIDDestination << std::hex << hostIDComponent;
+    sshostIDDestination >> hostIDecDestination;
+
+    m_destinationIPAdress = QString::number(networkID1DecDestination) + "." +
+                            QString::number(networkID2DecDestination) + "." +
+                            QString::number(networkID3DecDestination) + "." +
+                            QString::number(hostIDecDestination);
+}
 
 /*!
  * \brief Getter function for parsing the Destination IP Address
  * \return Destination IP Address - 4 byte
  */
-std::string UdpPackage::getDestinationIPAdress() const
+QString UdpPackage::getDestinationIPAdress() const
 {
     return m_destinationIPAdress;
 }
@@ -237,14 +253,14 @@ void UdpPackage::setUdpHeader(char* ethernetPacket)
         tempString << ethernetPacket[i]; // Buffering the UDP Header component
     }
 
-    m_udpHeader = tempString.str();
+    m_udpHeader = QString::fromStdString(convertToHex(tempString.str(), 1));
 }
 
 /*!
  * \brief Getter function for parsing the UDP Header frame
  * \return UDP Header frame content  - 8 byte
  */
-std::string UdpPackage::getUdpHeader() const
+QString UdpPackage::getUdpHeader() const
 {
     return m_udpHeader;
 }
@@ -252,23 +268,30 @@ std::string UdpPackage::getUdpHeader() const
 /*!
  * \brief Setter function for parsing the source port
  */
-void UdpPackage::setSourcePort()
+void UdpPackage::setSourcePort(char* ethernetPacket)
 {
-    const auto sourcePortTemp = convertToHex(m_udpHeader.substr(0,2), 0);
-    unsigned int sourcePortDec = 0;
+    unsigned int sourcePortDec;
+    std::string sourcePortTemp;
+    std::stringstream tempString;
+
+    for (int i = (ethernetFramelength + ipv4HeaderLength); i < (ethernetFramelength + ipv4HeaderLength + udpHeaderLength); ++i) {
+        tempString << ethernetPacket[i]; // Buffering the UDP Header component
+    }
+
+    sourcePortTemp = convertToHex(tempString.str().substr(0,2), 0);
 
     std::stringstream ssSourcePort;
     ssSourcePort << std::hex << sourcePortTemp;
     ssSourcePort >> sourcePortDec;
 
-    m_sourcePort = std::to_string(sourcePortDec);
+    m_sourcePort = QString::number(sourcePortDec);
 }
 
 /*!
  * \brief Getter function for parsing the source port from UDP header
  * \return Source port content - 2 byte
  */
-std::string UdpPackage::getSourcePort() const
+QString UdpPackage::getSourcePort() const
 {
     return m_sourcePort;
 }
@@ -276,23 +299,30 @@ std::string UdpPackage::getSourcePort() const
 /*!
  * \brief Setter function for parsing the destination port
  */
-void UdpPackage::setDestinationPort()
+void UdpPackage::setDestinationPort(char* ethernetPacket)
 {
-    const auto destinationPortTemp = convertToHex(m_udpHeader.substr(2,2), 0);
-    unsigned int destinationPortDec = 0;
+    unsigned int destinationPortDec;
+    std::string destinationPortTemp;
+    std::stringstream tempString;
+
+    for (int i = (ethernetFramelength + ipv4HeaderLength); i < (ethernetFramelength + ipv4HeaderLength + udpHeaderLength); ++i) {
+        tempString << ethernetPacket[i]; // Buffering the UDP Header component
+    }
+
+    destinationPortTemp = convertToHex(tempString.str().substr(2,2), 0);
 
     std::stringstream ssDestinationPort;
     ssDestinationPort << std::hex << destinationPortTemp;
     ssDestinationPort >> destinationPortDec;
 
-    m_destinationPort =  std::to_string(destinationPortDec);
+    m_destinationPort =  QString::number(destinationPortDec);
 }
 
 /*!
  * \brief Getter function for parsing the destination port from UDP header
  * \return Destination port content - 2 byte
  */
-std::string UdpPackage::getDestinationPort() const
+QString UdpPackage::getDestinationPort() const
 {
     return m_destinationPort;
 }
@@ -300,16 +330,18 @@ std::string UdpPackage::getDestinationPort() const
 /*!
  * \brief Setter function for parsing the UDP Checksum
  */
-void UdpPackage::setUdpChecksum()
+void UdpPackage::setUdpChecksum(char* ethernetPacket)
 {
-    const auto udpChecksumTemp = convertToHex(m_udpHeader.substr(6,2), 0);
-    unsigned int udpHeaderChecksumDec = 0;
+    std::string udpChecksumTemp;
+    std::stringstream tempString;
 
-    std::stringstream ssUDPHeaderChecksum;
-    ssUDPHeaderChecksum << std::hex << udpChecksumTemp;
-    ssUDPHeaderChecksum >> udpHeaderChecksumDec;
+    for (int i = (ethernetFramelength + ipv4HeaderLength); i < (ethernetFramelength + ipv4HeaderLength + udpHeaderLength); ++i) {
+        tempString << ethernetPacket[i]; // Buffering the UDP Header component
+    }
 
-    m_udpChecksum = QString::number(udpHeaderChecksumDec);
+    udpChecksumTemp = convertToHex(tempString.str().substr(6,2), 0);
+
+    m_udpChecksum = "0x" + QString::fromStdString(udpChecksumTemp);
 }
 
 /*!
@@ -344,22 +376,22 @@ QString UdpPackage::getPayload() const
     return m_payload;
 }
 
-///*!
-// * \brief Setter function for parsing main the payload size
-// */
-//void UdpPackage::setPayloadLength()
-//{
-//    m_payloadLength = m_packetLength - ethernetFramelength + ipv4HeaderLength + udpHeaderLength;
-//}
-//
-///*!
-// * \brief Getter function for parsing the payload length
-// * \return Payload size
-// */
-//int UdpPackage::getPayloadLength() const
-//{
-//    return m_payloadLength;
-//}
+/*!
+ * \brief Setter function for parsing main the payload size
+ */
+void UdpPackage::setPayloadLength()
+{
+    m_payloadLength = m_packetLength - (ethernetFramelength + ipv4HeaderLength + udpHeaderLength);
+}
+
+/*!
+ * \brief Getter function for parsing the payload length
+ * \return Payload size
+ */
+int UdpPackage::getPayloadLength() const
+{
+    return m_payloadLength;
+}
 
 /*!
  * \brief Setter function for parsing the whole package at once
@@ -370,16 +402,16 @@ void UdpPackage::setMainPacket(char* ethernetPacket, int packetLength)
 
     for (int i = 0; i < packetLength; ++i) {
         tempString << ethernetPacket[i];
-
-        m_mainPacket = tempString.str();
     }
+
+    m_mainPacket = QString::fromStdString(convertToHex(tempString.str(), 1));
 }
 
 /*!
  * \brief Getter function for parsing the whole UDP Packet
  * \return UDP Packet content
  */
-std::string UdpPackage::getMainPacket() const
+QString UdpPackage::getMainPacket() const
 {
     return m_mainPacket;
 }

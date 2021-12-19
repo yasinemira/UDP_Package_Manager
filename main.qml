@@ -19,8 +19,7 @@ Window {
 
     ColumnLayout {
         id: _udpPackageComponents
-        anchors.top: parent.top
-        anchors.topMargin: 100
+        anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 60
         spacing: 5
@@ -46,31 +45,31 @@ Window {
         DataContainer {
             id: _sourceIPAdress
             width: 150
-            componentDetail: ""
+            componentDetail: udpInstance.sourceIPAdress
         }
 
         DataContainer {
             id: _destinationIPAdress
             width: 150
-            componentDetail: ""
+            componentDetail: udpInstance.destinationIPAdress
         }
 
         DataContainer {
             id: _udpHeader
             width: 200
-            componentDetail: ""
+            componentDetail: udpInstance.udpHeader
         }
 
         DataContainer {
             id: _sourcePort
             width: 150
-            componentDetail: ""
+            componentDetail: udpInstance.sourcePort
         }
 
         DataContainer {
             id: _destinationPort
             width: 150
-            componentDetail: ""
+            componentDetail: udpInstance.destinationPort
         }
 
         DataContainer {
