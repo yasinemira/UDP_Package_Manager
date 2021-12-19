@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iomanip>
 #include <string>
+#include <array>
 
 #include <QDebug>
 #include <QString>
@@ -54,7 +55,7 @@ void UdpPackage::displayPackageDetails()
                 "\n■ UDP header: " << m_udpHeader <<
                 "\n■ Source port: " << m_sourcePort <<
                 "\n■ Destination port: " << m_destinationPort <<
-                "\n■ UDP Checksum: " << getUdpChecksum() <<
+                "\n■ UDP Checksum: " << m_udpChecksum <<
                 "\n■ UDP Payload: " << m_payload <<
                 "\n■ UDP Payload size: " << m_payloadLength <<
                 "\n■ UDP Main Packet: " << m_mainPacket <<
@@ -137,6 +138,9 @@ void UdpPackage::setSourceIPAdress(char* ethernetPacket)
 {
     std::string sourceIPAdressTemp;
     std::stringstream tempString;
+    std::array <std::stringstream, 4> ssnetworkIDSources;
+    std::array <unsigned int, 4> networkIDDecSources = {0};
+    std::array <std::string, 4> networkIDComponents;
 
     for (int i = ethernetFramelength; i < (ethernetFramelength + ipv4HeaderLength); ++i) {
         tempString << ethernetPacket[i]; // Buffering IPv4 frame header component
@@ -144,37 +148,15 @@ void UdpPackage::setSourceIPAdress(char* ethernetPacket)
 
     sourceIPAdressTemp = convertToHex(tempString.str().substr(6,4), 0);
 
-    std::stringstream ssnetworkID1Source;
-    std::stringstream ssnetworkID2Source;
-    std::stringstream ssnetworkID3Source;
-    std::stringstream sshostIDSource;
+    for (int i = 0; i <= 3; ++i) {
+        networkIDComponents[i] = sourceIPAdressTemp.substr(i*2, 2);
+        ssnetworkIDSources[i] << std::hex << networkIDComponents[i];
+        ssnetworkIDSources [i] >> networkIDDecSources[i];
+    }
 
-    unsigned int networkID1DecSource = 0;
-    unsigned int networkID2DecSource = 0;
-    unsigned int networkID3DecSource = 0;
-    unsigned int hostIDDecSource = 0;
-
-    std::string networkIDComponent1 = sourceIPAdressTemp.substr(0,2);
-    std::string networkIDComponent2 = sourceIPAdressTemp.substr(2,2);
-    std::string networkIDComponent3 = sourceIPAdressTemp.substr(4,2);
-    std::string hostIDComponent = sourceIPAdressTemp.substr(6,2);
-
-    ssnetworkID1Source << std::hex << networkIDComponent1;
-    ssnetworkID1Source >> networkID1DecSource;
-
-    ssnetworkID2Source << std::hex << networkIDComponent2;
-    ssnetworkID2Source >> networkID2DecSource;
-
-    ssnetworkID3Source << std::hex << networkIDComponent3;
-    ssnetworkID3Source >> networkID3DecSource;
-
-    sshostIDSource << std::hex << hostIDComponent;
-    sshostIDSource >> hostIDDecSource;
-
-    m_sourceIPAdress = QString::number(networkID1DecSource) + "." +
-                       QString::number(networkID2DecSource) + "." +
-                       QString::number(networkID3DecSource) + "." +
-                       QString::number(hostIDDecSource);
+    for (auto iter = networkIDDecSources.cbegin(); iter != networkIDDecSources.cend(); ++iter) {
+        m_sourceIPAdress += QString::number(*iter) + (*iter == networkIDDecSources.back() ? "" : ".");
+    }
 }
 
 /*!
@@ -193,6 +175,9 @@ void UdpPackage::setDestinationIPAdress(char* ethernetPacket)
 {
     std::string destinationIPAdressTemp;
     std::stringstream tempString;
+    std::array <std::stringstream, 4> ssnetworkIDDestinations;
+    std::array <unsigned int, 4> networkIDDecDestinations = {0};
+    std::array <std::string, 4> networkIDComponents;
 
     for (int i = ethernetFramelength; i < (ethernetFramelength + ipv4HeaderLength); ++i) {
         tempString << ethernetPacket[i]; // Buffering IPv4 frame header component
@@ -200,37 +185,15 @@ void UdpPackage::setDestinationIPAdress(char* ethernetPacket)
 
     destinationIPAdressTemp = convertToHex(tempString.str().substr(10,4), 0);
 
-    std::stringstream ssnetworkID1Destination;
-    std::stringstream ssnetworkID2Destination;
-    std::stringstream ssnetworkID3Destination;
-    std::stringstream sshostIDDestination;
+    for (int i = 0; i <= 3; ++i) {
+        networkIDComponents[i] = destinationIPAdressTemp.substr(i*2, 2);
+        ssnetworkIDDestinations[i] << std::hex << networkIDComponents[i];
+        ssnetworkIDDestinations [i] >> networkIDDecDestinations[i];
+    }
 
-    unsigned int networkID1DecDestination = 0;
-    unsigned int networkID2DecDestination = 0;
-    unsigned int networkID3DecDestination = 0;
-    unsigned int hostIDecDestination = 0;
-
-    std::string networkIDComponent1 = destinationIPAdressTemp.substr(0,2);
-    std::string networkIDComponent2 = destinationIPAdressTemp.substr(2,2);
-    std::string networkIDComponent3 = destinationIPAdressTemp.substr(4,2);
-    std::string hostIDComponent = destinationIPAdressTemp.substr(6,2);
-
-    ssnetworkID1Destination << std::hex << networkIDComponent1;
-    ssnetworkID1Destination >> networkID1DecDestination;
-
-    ssnetworkID2Destination << std::hex << networkIDComponent2;
-    ssnetworkID2Destination >> networkID2DecDestination;
-
-    ssnetworkID3Destination << std::hex << networkIDComponent3;
-    ssnetworkID3Destination >> networkID3DecDestination;
-
-    sshostIDDestination << std::hex << hostIDComponent;
-    sshostIDDestination >> hostIDecDestination;
-
-    m_destinationIPAdress = QString::number(networkID1DecDestination) + "." +
-                            QString::number(networkID2DecDestination) + "." +
-                            QString::number(networkID3DecDestination) + "." +
-                            QString::number(hostIDecDestination);
+    for (auto iter = networkIDDecDestinations.cbegin(); iter != networkIDDecDestinations.cend(); ++iter) {
+        m_destinationIPAdress += QString::number(*iter) + (*iter == networkIDDecDestinations.back() ? "" : ".");
+    }
 }
 
 /*!
